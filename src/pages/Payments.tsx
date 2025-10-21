@@ -128,9 +128,15 @@ export function Payments() {
                     {payment.paymentDate}
                   </TableCell>
                   <TableCell className="py-6 px-8 text-center">
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-800 ring-1 ring-inset ring-green-600/20">
-                      {payment.status}
-                    </span>
+                    {payment.status === "open" ? (
+                      <span className="inline-flex items-center rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-800 ring-1 ring-inset ring-green-600/20">
+                        {payment.status}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center rounded-full bg-red-100 px-4 py-2 text-sm font-medium text-red-800 ring-1 ring-inset ring-red-600/20">
+                        {payment.status}
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell className="py-6 px-8 text-center">
                     {payment.createdAt}

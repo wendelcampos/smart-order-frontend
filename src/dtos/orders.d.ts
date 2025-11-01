@@ -2,13 +2,13 @@ type OrdersAPIResponse = {
   id: string
   status: string
   createdAt: string | null
-  table: {
+  table?: {
     tableNumber: string
   }
-  waiter: {
+  waiter?: {
     name: string
   }
-  customer: {
+  customer?: {
     name: string
   }
 }

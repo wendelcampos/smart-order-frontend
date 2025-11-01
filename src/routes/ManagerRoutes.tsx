@@ -7,6 +7,7 @@ import { NotFound } from "@/pages/NotFound"
 import { Tables } from "@/pages/Tables"
 import { Waiters } from "@/pages/Waiters"
 import { Products } from "@/pages/Products"
+import { Satisfaction } from "@/pages/satisfaction"
 import { Orders } from "@/pages/Orders"
 import { Payments } from "@/pages/Payments"
 import { Customers } from "@/pages/Customers"
@@ -20,6 +21,7 @@ export function ManagerRoutes() {
         <Route path="tables" element={<Tables />} />
         <Route path="waiters" element={<Waiters />} />
         <Route path="products" element={<Products />} />
+        <Route path="satisfaction" element={<Satisfaction />} />
         <Route path="payments" element={<Payments />} />
         <Route path="customers" element={<Customers />} />
         <Route path="orders" element={<Orders />} />

@@ -7,14 +7,17 @@
   --default-font-family: font-family: "Open Sans", sans-serif;
 }
 
+
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
+  font-family: sans-serif;
 }
 
 body {
   font-family: var(--default-font-family);
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
 }
 
 @theme inline {
@@ -131,4 +134,9 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+span {
+  font-size: large ;
+  font-family: sans-serif ;
 }

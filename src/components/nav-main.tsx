@@ -1,5 +1,4 @@
 import { type LucideIcon } from "lucide-react"
-
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -17,6 +16,7 @@ export function NavMain({
     url: string
     icon?: LucideIcon
     isActive?: boolean
+    target?: string
     items?: {
       title: string
       url: string
@@ -29,12 +29,22 @@ export function NavMain({
       <SidebarMenu className="gap-4">
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton asChild>
-              <Link to={item.url}>
+            {item.url.startsWith('http') ? (
+              <SidebarMenuButton 
+                onClick={() => window.open(item.url, '_blank', 'noopener,noreferrer')}
+                className="flex items-center gap-2 cursor-pointer"
+              >
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
-              </Link>
-            </SidebarMenuButton>
+              </SidebarMenuButton>
+            ) : (
+              <SidebarMenuButton asChild>
+                <Link to={item.url}>
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            )}
           </SidebarMenuItem>
         ))}
       </SidebarMenu>

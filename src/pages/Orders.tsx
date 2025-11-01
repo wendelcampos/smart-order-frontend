@@ -101,15 +101,25 @@ export function Orders() {
   async function fetchOrders() {
     try {
       const response = await api.get<OrdersAPIResponse[]>("/orders")
+      console.log("Retorno da requisição /orders:", response.data)
+
+      console.log("Dados do order: ", response.data.map((order) => ({
+          id: order.id,
+          status: order.status,
+          createdAt: formatDate(order.createdAt ? order.createdAt : ""),
+          customer: {name: order},
+          table: order.table?.tableNumber,
+          waiter: order.waiter
+        })))
 
       setOrders(
         response.data.map((order) => ({
           id: order.id,
           status: order.status,
           createdAt: formatDate(order.createdAt ? order.createdAt : ""),
-          customer: { name: order.customer.name },
-          table: { tableNumber: order.table.tableNumber },
-          waiter: { name: order.waiter.name },
+          customer: order.customer, //{ name: order.customer.name },
+          table: order.table, // { tableNumber: order.table.tableNumber },
+          waiter: order.waiter //{ name: order.waiter.name },
         }))
       )
     } catch (error) {
@@ -301,7 +311,9 @@ export function Orders() {
               </TableRow>
             </TableHeader>
             <TableBody>
+
               {orders.map((order) => (
+                
                 <TableRow
                   key={order.id}
                   className="hover:bg-muted/30 transition-colors h-14"
@@ -310,10 +322,10 @@ export function Orders() {
                     {order.id}
                   </TableCell>
                   <TableCell className="py-8 px-8 text-center text-base">
-                    {order.table.tableNumber}
+                    {order.table?.tableNumber}
                   </TableCell>
                   <TableCell className="py-8 px-8 text-center text-base">
-                    {order.waiter.name}
+                    {order.waiter?.name}
                   </TableCell>
                   <TableCell className="py-8 px-8 text-center">
                     {order.status === "open" ? (

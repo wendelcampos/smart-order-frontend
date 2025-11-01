@@ -12,6 +12,7 @@ import {
   ListOrdered,
   CircleDollarSign,
   Users,
+  UtensilsCrossedIcon,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -44,8 +45,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     navMain: [
       {
         title: "Dashboard",
-        url: "/",
+        url: "https://smart-order-dashboard-pi.streamlit.app/",
         icon: ChartNoAxesCombined,
+        target: "_blank"
+      },
+      {
+        title: "Pesquisa de Satisfação",
+        url: "/satisfaction",
+        icon: UtensilsCrossedIcon,
       },
       {
         title: "Garçons",

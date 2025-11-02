@@ -9,15 +9,14 @@
 
 
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  font-family: sans-serif;
 }
 
 body {
   font-family: var(--default-font-family);
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
+  line-height: 1.5; 
 }
 
 @theme inline {
@@ -136,7 +135,26 @@ body {
   }
 }
 
-span {
-  font-size: large ;
-  font-family: sans-serif ;
+li.group\/menu-item.relative {font-family: sans-serif;}
+.p-2 {padding: calc(var(--spacing) * 2) !important;}
+.satisfaction-container { padding: 1.25rem; }
+.satisfaction-card { padding: 2rem; }
+.satisfaction-header { margin-bottom: 1.5rem; padding-bottom: 1.5rem; gap: 1rem; }
+.satisfaction-logo { gap: 0.75rem; }
+.satisfaction-badge { margin-left: 0.75rem; padding-left: 0.75rem; }
+.satisfaction-title { margin-bottom: 0.75rem; }
+.satisfaction-subtitle { margin-bottom: 2rem; }
+.satisfaction-rating-container { margin: 2.5rem 0; gap: 1rem; }
+.satisfaction-rating-option { padding: 1rem 0.5rem; }
+.satisfaction-emoji { margin-bottom: 0.75rem; }
+.satisfaction-label { margin-top: 0.5rem; }
+.satisfaction-modal { padding: 2rem; }
+.satisfaction-modal-icon { margin-bottom: 1.5rem; }
+.satisfaction-modal-title { margin-bottom: 1rem; }
+.satisfaction-modal-text { margin-bottom: 1.5rem; }
+.satisfaction-countdown { margin-top: 1rem; }
+
+@media (min-width: 768px) {
+  .satisfaction-card { padding: 2.5rem; }
+  .satisfaction-modal { padding: 2.5rem; }
 }

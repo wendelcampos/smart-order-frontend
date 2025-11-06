@@ -49,11 +49,21 @@ export function Waiters() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      await api.post("/waiters", data)
+      const response = await api.post("/waiters", data)
 
-      if (confirm("Garçom cadastrado com sucesso")) {
-        window.location.reload()
-      }
+      const newWaiter = response.data
+      setWaiters((prevWaiters) => [
+        ...prevWaiters,
+        {
+          id: newWaiter.id,
+          name: newWaiter.name,
+          hiringDate: formatDate(newWaiter.hiringDate || ""),
+        },
+      ])
+
+      form.reset()
+
+      alert("Garçom cadastrado com sucesso!")
     } catch (error) {
       console.log(error)
 
@@ -93,9 +103,11 @@ export function Waiters() {
     try {
       await api.delete(`/waiters/${waiterId}`)
 
-      if (confirm("Garçom deletado com sucesso!")) {
-        window.location.reload()
-      }
+      setWaiters((prevWaiters) =>
+        prevWaiters.filter((waiter) => waiter.id !== waiterId)
+      )
+
+      alert("Garçom deletado com sucesso!")
     } catch (error) {
       console.log(error)
 

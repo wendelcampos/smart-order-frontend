@@ -33,7 +33,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     user: {
       name: auth.session?.user.name ?? "Nome do Usuário",
       email: auth.session?.user.email ?? "Email do Usuário",
-      avatar: "/avatars/shadcn.jpg",
+      avatar: "", // Removido o avatar que não existe
     },
     teams: [
       {
@@ -47,7 +47,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "Dashboard",
         url: "https://smart-order-dashboard-pi.streamlit.app/",
         icon: ChartNoAxesCombined,
-        target: "_blank"
+        target: "_blank",
       },
       {
         title: "Pesquisa de Satisfação",

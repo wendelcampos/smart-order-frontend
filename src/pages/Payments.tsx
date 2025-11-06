@@ -29,21 +29,25 @@ export function Payments() {
           orderId: payment.orderId,
           paymentType: payment.paymentType,
           total: formatCurrency(Number(payment.total)),
-          createdAt: formatDate(payment.createdAt ? payment.createdAt : ""),
+          createdAt: formatDate(payment.createdAt || new Date().toISOString()),
           paymentDate: formatDate(
-            payment.paymentDate ? payment.paymentDate : ""
+            payment.paymentDate || new Date().toISOString()
           ),
           status: payment.status,
         }))
       )
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao carregar pagamentos:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao carregar pagamentos: ${errorMessage}`)
+      } else {
+        alert("Erro ao carregar pagamentos.")
       }
-
-      alert("Erro ao carregar")
     }
   }
 
@@ -52,20 +56,30 @@ export function Payments() {
   }, [])
 
   async function handleOnDelete(paymentId: string) {
+    if (!confirm("Tem certeza que deseja deletar este pagamento?")) {
+      return
+    }
+
     try {
       await api.delete(`/payments/${paymentId}`)
 
-      if (confirm("Pagamento deletado com sucesso!")) {
-        window.location.reload()
-      }
+      setPayments((prevPayments) =>
+        prevPayments.filter((payment) => payment.id !== paymentId)
+      )
+
+      alert("Pagamento deletado com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao deletar pagamento:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao deletar pagamento: ${errorMessage}`)
+      } else {
+        alert("Erro ao deletar pagamento.")
       }
-
-      alert("Erro ao deletar pagamento")
     }
   }
 

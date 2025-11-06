@@ -64,20 +64,41 @@ export function Products() {
         price: Number(formattedPrice),
       }
 
-      await api.post("/products", dataFormatted)
+      const response = await api.post("/products", dataFormatted)
 
-      if (confirm("Produto cadastrado com sucesso!")) {
-        window.location.reload()
+      if (response.data && response.data.id) {
+        const newProduct = response.data
+        setProducts((prevProducts) => [
+          ...prevProducts,
+          {
+            id: newProduct.id,
+            name: newProduct.name,
+            description: newProduct.description,
+            price: formatCurrency(Number(newProduct.price)),
+            category: newProduct.category.toUpperCase().replaceAll("_", " "),
+          },
+        ])
+      } else {
+        await fetchProducts()
       }
+
+      form.reset()
+      alert("Produto cadastrado com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao cadastrar produto:", error)
 
       if (error instanceof ZodError) {
-        return { message: error.issues[0].message }
+        alert(`Erro de validação: ${error.issues[0].message}`)
+        return
       }
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao cadastrar produto: ${errorMessage}`)
+        return
       }
 
       alert("Erro ao cadastrar produto.")
@@ -98,28 +119,44 @@ export function Products() {
         }))
       )
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao carregar produtos:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao carregar produtos: ${errorMessage}`)
+      } else {
+        alert("Erro ao carregar produtos.")
       }
-
-      alert("Erro ao carregar.")
     }
   }
 
   async function handleOnDelete(productId: string) {
+    if (!confirm("Tem certeza que deseja deletar este produto?")) {
+      return
+    }
+
     try {
       await api.delete(`/products/${productId}`)
 
-      if (confirm("Produto deletado com sucesso!")) {
-        window.location.reload()
-      }
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.id !== productId)
+      )
+
+      alert("Produto deletado com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao deletar produto:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao deletar produto: ${errorMessage}`)
+      } else {
+        alert("Erro ao deletar produto.")
       }
     }
   }

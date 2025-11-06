@@ -60,76 +60,90 @@ export function Orders() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      await api.post("/orders", data)
+      const response = await api.post("/orders", data)
 
-      if (confirm("Pedido cadastrado com sucesso!")) {
-        window.location.reload()
-      }
+      await fetchOrders()
+
+      form.reset()
+      alert("Pedido cadastrado com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao cadastrar pedido:", error)
 
       if (error instanceof ZodError) {
-        return { message: error.issues[0].message }
+        alert(`Erro de validação: ${error.issues[0].message}`)
+        return
       }
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao cadastrar pedido: ${errorMessage}`)
+        return
       }
 
-      alert("Erro ao cadastrar")
+      alert("Erro ao cadastrar pedido.")
     }
   }
 
   async function handleOnDelete(orderId: string) {
+    if (!confirm("Tem certeza que deseja deletar este pedido?")) {
+      return
+    }
+
     try {
       await api.delete(`/orders/${orderId}`)
 
-      if (confirm("Pedido deletado com sucesso!")) {
-        window.location.reload()
-      }
+      setOrders((prevOrders) =>
+        prevOrders.filter((order) => order.id !== orderId)
+      )
+
+      alert("Pedido deletado com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao deletar pedido:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao deletar pedido: ${errorMessage}`)
+      } else {
+        alert("Erro ao deletar pedido.")
       }
-
-      alert("Erro ao deletar pedido")
     }
   }
 
   async function fetchOrders() {
     try {
       const response = await api.get<OrdersAPIResponse[]>("/orders")
-      console.log("Retorno da requisição /orders:", response.data)
-
-      console.log("Dados do order: ", response.data.map((order) => ({
-          id: order.id,
-          status: order.status,
-          createdAt: formatDate(order.createdAt ? order.createdAt : ""),
-          customer: {name: order},
-          table: order.table?.tableNumber,
-          waiter: order.waiter
-        })))
 
       setOrders(
         response.data.map((order) => ({
           id: order.id,
           status: order.status,
-          createdAt: formatDate(order.createdAt ? order.createdAt : ""),
-          customer: order.customer, //{ name: order.customer.name },
-          table: order.table, // { tableNumber: order.table.tableNumber },
-          waiter: order.waiter //{ name: order.waiter.name },
+          createdAt: formatDate(order.createdAt || new Date().toISOString()),
+          customer: order.customer,
+          table: order.table,
+          waiter: order.waiter,
         }))
       )
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao carregar pedidos:", error)
 
       if (error instanceof AxiosError) {
         if (error.response?.status === 400) {
           setOrders([])
-          return { message: error.response?.data.message }
+          return
         }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao carregar pedidos: ${errorMessage}`)
+      } else {
+        alert("Erro ao carregar pedidos.")
       }
     }
   }
@@ -142,21 +156,25 @@ export function Orders() {
         response.data.map((waiter) => ({
           id: waiter.id,
           name: waiter.name,
-          hiringDate: formatDate(waiter.hiringDate ? waiter.hiringDate : ""),
+          hiringDate: formatDate(waiter.hiringDate || new Date().toISOString()),
         }))
       )
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao carregar garçons:", error)
 
       if (error instanceof AxiosError) {
         if (error.response?.status === 400) {
           setWaiters([])
-          return { message: error.response?.data.message }
+          return
         }
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao carregar garçons: ${errorMessage}`)
+      } else {
+        alert("Erro ao carregar garçons.")
       }
-
-      alert("Erro ao carregar!")
     }
   }
 
@@ -172,17 +190,21 @@ export function Orders() {
         }))
       )
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao carregar mesas:", error)
 
       if (error instanceof AxiosError) {
         if (error.response?.status === 400) {
           setTables([])
-          return { message: error.response?.data.message }
+          return
         }
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao carregar mesas: ${errorMessage}`)
+      } else {
+        alert("Erro ao carregar mesas.")
       }
-
-      alert("Erro ao carregar!.")
     }
   }
 
@@ -311,9 +333,7 @@ export function Orders() {
               </TableRow>
             </TableHeader>
             <TableBody>
-
               {orders.map((order) => (
-                
                 <TableRow
                   key={order.id}
                   className="hover:bg-muted/30 transition-colors h-14"

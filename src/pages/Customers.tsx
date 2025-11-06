@@ -58,23 +58,46 @@ export function Customers() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      await api.post("/customers", data)
+      const response = await api.post("/customers", data)
 
-      if (confirm("Cliente cadastrado com sucesso")) {
-        window.location.reload()
+      if (response.data && response.data.id) {
+        const newCustomer = response.data
+        setCustomers((prevCustomers) => [
+          ...prevCustomers,
+          {
+            id: newCustomer.id,
+            name: newCustomer.name,
+            telephone: formatPhone(newCustomer.telephone),
+            email: newCustomer.email,
+            createdAt: formatDate(
+              newCustomer.createdAt || new Date().toISOString()
+            ),
+          },
+        ])
+      } else {
+        await fetchCustomers()
       }
+
+      form.reset()
+      alert("Cliente cadastrado com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao cadastrar cliente:", error)
 
       if (error instanceof ZodError) {
-        return { message: error.issues[0].message }
+        alert(`Erro de validação: ${error.issues[0].message}`)
+        return
       }
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao cadastrar cliente: ${errorMessage}`)
+        return
       }
 
-      alert("Erro ao cadastrar cliente!.")
+      alert("Erro ao cadastrar cliente.")
     }
   }
 
@@ -88,39 +111,49 @@ export function Customers() {
           name: customer.name,
           telephone: formatPhone(customer.telephone),
           email: customer.email,
-          createdAt: formatDate(customer.createdAt ? customer.createdAt : ""),
+          createdAt: formatDate(customer.createdAt || new Date().toISOString()),
         }))
       )
     } catch (error) {
-      console.log(error)
-
-      if (error instanceof ZodError) {
-        return { message: error.issues[0].message }
-      }
+      console.log("Erro ao carregar clientes:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao carregar clientes: ${errorMessage}`)
+      } else {
+        alert("Erro ao carregar clientes.")
       }
-
-      alert("Erro ao carregar clientes!.")
     }
   }
 
   async function handleOnDelete(customerId: string) {
+    if (!confirm("Tem certeza que deseja deletar este cliente?")) {
+      return
+    }
+
     try {
       await api.delete(`/customers/${customerId}`)
 
-      if (confirm("Cliente deletado com sucesso!")) {
-        window.location.reload()
-      }
+      setCustomers((prevCustomers) =>
+        prevCustomers.filter((customer) => customer.id !== customerId)
+      )
+
+      alert("Cliente deletado com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao deletar cliente:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao deletar cliente: ${errorMessage}`)
+      } else {
+        alert("Erro ao deletar cliente.")
       }
-
-      alert("Erro ao deletar cliente!.")
     }
   }
 

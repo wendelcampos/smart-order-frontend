@@ -28,26 +28,42 @@ export function Users() {
         }))
       )
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao carregar usuários:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao carregar usuários: ${errorMessage}`)
+      } else {
+        alert("Erro ao carregar usuários.")
       }
     }
   }
 
   async function handleOnDelete(userId: string) {
+    if (!confirm("Tem certeza que deseja deletar este usuário?")) {
+      return
+    }
+
     try {
       await api.delete(`/users/${userId}`)
 
-      if (confirm("Usuário deletado com sucesso!")) {
-        window.location.reload()
-      }
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId))
+
+      alert("Usuário deletado com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao deletar usuário:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao deletar usuário: ${errorMessage}`)
+      } else {
+        alert("Erro ao deletar usuário.")
       }
     }
   }

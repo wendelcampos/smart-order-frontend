@@ -49,11 +49,8 @@ export function Waiters() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      console.log("Dados enviados:", data) // Debug
       const response = await api.post("/waiters", data)
-      console.log("Resposta da API:", response.data) // Debug
 
-      // Se a resposta tem dados, adiciona diretamente
       if (response.data && response.data.id) {
         const newWaiter = response.data
         setWaiters((prevWaiters) => [
@@ -67,7 +64,6 @@ export function Waiters() {
           },
         ])
       } else {
-        // Se a resposta está vazia, recarrega a lista
         await fetchWaiters()
       }
 

@@ -43,20 +43,39 @@ export function Tables() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      await api.post("/tables", data)
+      const response = await api.post("/tables", data)
 
-      if (confirm("Mesa cadatrada com sucesso!")) {
-        window.location.reload()
+      if (response.data && response.data.id) {
+        const newTable = response.data
+        setTables((prevTables) => [
+          ...prevTables,
+          {
+            id: newTable.id,
+            tableNumber: newTable.tableNumber,
+            status: newTable.status,
+          },
+        ])
+      } else {
+        await fetchTables()
       }
+
+      form.reset()
+      alert("Mesa cadastrada com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao cadastrar mesa:", error)
 
       if (error instanceof ZodError) {
-        return { message: error.issues[0].message }
+        alert(`Erro de validação: ${error.issues[0].message}`)
+        return
       }
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao cadastrar mesa: ${errorMessage}`)
+        return
       }
 
       alert("Erro ao cadastrar a mesa.")
@@ -75,17 +94,25 @@ export function Tables() {
         }))
       )
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao carregar mesas:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao carregar mesas: ${errorMessage}`)
+      } else {
+        alert("Erro ao carregar mesas.")
       }
-
-      alert("Erro ao carregar!.")
     }
   }
 
   async function handleOnDelete(tableId: string) {
+    if (!confirm("Tem certeza que deseja deletar esta mesa?")) {
+      return
+    }
+
     try {
       await api.delete(`/tables/${tableId}`)
 
@@ -95,13 +122,17 @@ export function Tables() {
 
       alert("Mesa deletada com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao deletar mesa:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao deletar mesa: ${errorMessage}`)
+      } else {
+        alert("Erro ao deletar mesa.")
       }
-
-      alert("Erro ao deletar a mesa.")
     }
   }
 

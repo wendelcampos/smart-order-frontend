@@ -89,9 +89,11 @@ export function Tables() {
     try {
       await api.delete(`/tables/${tableId}`)
 
-      if (confirm("Mesa deletada com sucesso!")) {
-        window.location.reload()
-      }
+      setTables((prevTables) =>
+        prevTables.filter((table) => table.id !== tableId)
+      )
+
+      alert("Mesa deletada com sucesso!")
     } catch (error) {
       console.log(error)
 

@@ -31,9 +31,10 @@ const formSchema = z.object({
 
 type DialogAddItemsProps = {
   orderId: string
+  onItemAdded?: () => void
 }
 
-export function DialogAddItems({ orderId }: DialogAddItemsProps) {
+export function DialogAddItems({ orderId, onItemAdded }: DialogAddItemsProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,9 +53,13 @@ export function DialogAddItems({ orderId }: DialogAddItemsProps) {
 
       await api.post("/ordersItens", dataToSend)
 
-      if (confirm("Item adicionado com sucesso!")) {
-        window.location.reload()
-      }
+      // Chama a callback para atualizar a lista no componente pai
+      onItemAdded?.()
+
+      // Limpa o formulário
+      form.reset()
+
+      alert("Item adicionado com sucesso!")
     } catch (error) {
       console.log(error)
 

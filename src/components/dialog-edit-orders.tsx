@@ -66,9 +66,9 @@ export function DialogEditOrders({ orderId }: DialogEditOrdersProps) {
     try {
       await api.delete(`/ordersItens/${itemId}`)
 
-      if (confirm("Item deletado com sucesso!")) {
-        window.location.reload()
-      }
+      setItems((prevItems) => prevItems.filter((item) => item.id !== itemId))
+
+      alert("Item deletado com sucesso!")
     } catch (error) {
       console.log(error)
 
@@ -151,7 +151,7 @@ export function DialogEditOrders({ orderId }: DialogEditOrdersProps) {
                 Cancelar
               </Button>
             </DialogClose>
-            <DialogAddItems orderId={orderId} />
+            <DialogAddItems orderId={orderId} onItemAdded={fetchItemsOrder} />
           </DialogFooter>
         </DialogContent>
       </form>

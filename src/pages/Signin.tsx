@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form"
 import { AxiosError } from "axios"
 import { useAuth } from "@/hooks/useAuth"
+import { Link } from "react-router"
 
 const formSchema = z.object({
   email: z.string().email({ message: "E-mail inválido" }),
@@ -103,12 +104,12 @@ export function SignIn() {
               Entrar
             </Button>
 
-            <a
-              href="/signup"
+            <Link
+              to="/signup"
               className="text-sm font-semibold text-black mt-10 mb-4 text-center hover:text-orange-400 transition ease-linear"
             >
               Criar conta
-            </a>
+            </Link>
           </form>
         </Form>
       </div>

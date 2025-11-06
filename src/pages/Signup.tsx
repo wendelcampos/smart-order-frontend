@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import { z, ZodError } from "zod"
 import { AxiosError } from "axios"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate } from "react-router"
+import { useNavigate, Link } from "react-router"
 
 import { api } from "@/services/api"
 
@@ -84,7 +84,7 @@ export function SignUp() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Nome</FormLabel>
                   <FormControl>
                     <Input type="text" placeholder="Seu nome" {...field} />
                   </FormControl>
@@ -146,12 +146,12 @@ export function SignUp() {
               Cadastrar
             </Button>
 
-            <a
-              href="/"
+            <Link
+              to="/"
               className="text-sm font-semibold text-black mt-10 mb-4 text-center hover:text-orange-400 transition ease-linear"
             >
               Já tenho uma conta
-            </a>
+            </Link>
           </form>
         </Form>
       </div>

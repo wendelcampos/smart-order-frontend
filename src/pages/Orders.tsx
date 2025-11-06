@@ -60,7 +60,7 @@ export function Orders() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      const response = await api.post("/orders", data)
+      await api.post("/orders", data)
 
       await fetchOrders()
 

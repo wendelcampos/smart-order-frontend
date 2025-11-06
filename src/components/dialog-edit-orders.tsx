@@ -35,8 +35,12 @@ export function DialogEditOrders({ orderId }: DialogEditOrdersProps) {
     try {
       const response = await api.get<OrderItemAPIResponse[]>("/ordersItens")
 
+      const filteredItems = response.data.filter(
+        (item) => item.orderId === orderId
+      )
+
       setItems(
-        response.data.map((item) => ({
+        filteredItems.map((item) => ({
           id: item.id,
           orderId: item.orderId,
           quantity: item.quantity,

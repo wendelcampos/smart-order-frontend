@@ -53,17 +53,23 @@ export function Waiters() {
       const response = await api.post("/waiters", data)
       console.log("Resposta da API:", response.data) // Debug
 
-      const newWaiter = response.data
-      setWaiters((prevWaiters) => [
-        ...prevWaiters,
-        {
-          id: newWaiter.id,
-          name: newWaiter.name,
-          hiringDate: formatDate(
-            newWaiter.hiringDate || new Date().toISOString()
-          ),
-        },
-      ])
+      // Se a resposta tem dados, adiciona diretamente
+      if (response.data && response.data.id) {
+        const newWaiter = response.data
+        setWaiters((prevWaiters) => [
+          ...prevWaiters,
+          {
+            id: newWaiter.id,
+            name: newWaiter.name,
+            hiringDate: formatDate(
+              newWaiter.hiringDate || new Date().toISOString()
+            ),
+          },
+        ])
+      } else {
+        // Se a resposta está vazia, recarrega a lista
+        await fetchWaiters()
+      }
 
       form.reset()
       alert("Garçom cadastrado com sucesso!")

@@ -49,7 +49,9 @@ export function Waiters() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
+      console.log("Dados enviados:", data) // Debug
       const response = await api.post("/waiters", data)
+      console.log("Resposta da API:", response.data) // Debug
 
       const newWaiter = response.data
       setWaiters((prevWaiters) => [
@@ -57,12 +59,13 @@ export function Waiters() {
         {
           id: newWaiter.id,
           name: newWaiter.name,
-          hiringDate: formatDate(newWaiter.hiringDate || ""),
+          hiringDate: formatDate(
+            newWaiter.hiringDate || new Date().toISOString()
+          ),
         },
       ])
 
       form.reset()
-
       alert("Garçom cadastrado com sucesso!")
     } catch (error) {
       console.log(error)

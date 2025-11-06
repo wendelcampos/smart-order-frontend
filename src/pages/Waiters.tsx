@@ -68,15 +68,23 @@ export function Waiters() {
       form.reset()
       alert("Garçom cadastrado com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao cadastrar garçom:", error)
 
       if (error instanceof ZodError) {
-        return { message: error.issues[0].message }
+        alert(`Erro de validação: ${error.issues[0].message}`)
+        return
       }
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao cadastrar garçom: ${errorMessage}`)
+        return
       }
+
+      alert("Erro ao cadastrar o garçom.")
     }
   }
 
@@ -88,21 +96,29 @@ export function Waiters() {
         response.data.map((waiter) => ({
           id: waiter.id,
           name: waiter.name,
-          hiringDate: formatDate(waiter.hiringDate ? waiter.hiringDate : ""),
+          hiringDate: formatDate(waiter.hiringDate || new Date().toISOString()),
         }))
       )
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao carregar garçons:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao carregar garçons: ${errorMessage}`)
+      } else {
+        alert("Erro ao carregar!")
       }
-
-      alert("Erro ao carregar!")
     }
   }
 
   async function handleOnDelete(waiterId: string) {
+    if (!confirm("Tem certeza que deseja deletar este garçom?")) {
+      return
+    }
+
     try {
       await api.delete(`/waiters/${waiterId}`)
 
@@ -112,13 +128,17 @@ export function Waiters() {
 
       alert("Garçom deletado com sucesso!")
     } catch (error) {
-      console.log(error)
+      console.log("Erro ao deletar garçom:", error)
 
       if (error instanceof AxiosError) {
-        return { message: error.response?.data.message }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Erro do servidor"
+        alert(`Erro ao deletar garçom: ${errorMessage}`)
+      } else {
+        alert("Erro ao deletar!")
       }
-
-      alert("Erro ao deletar!")
     }
   }
 
